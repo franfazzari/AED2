@@ -1,0 +1,130 @@
+// Práctica 1 - Ejercicio 12
+
+TAD JuegoDeLaOca
+    igualdad observacional
+        (∀o1,o2: oca)(o1 =obs o2 ⟺ (
+            tablero(o1) =obs tablero(o2)
+            ∧ #turno(o1) =obs #turno(o2)
+            ∧L (∀n: nat)(n < #turno(o1) ⟹L dado(n, o1) =obs dado(n, o2))
+        ))
+    géneros oca
+    exporta oca, generadores, observadores
+    usa Nat, Tablero
+    observadores básicos
+        tablero: oca → tablero
+        #turno: oca → nat
+        dado: nat n × oca o → nat {n < #turno(o)}
+    generadores
+        iniciar: tablero t → oca
+        avanzar: nat d × oca o → oca {(∀j: nat)(j ≤ 1 ⟹L dóndeEstá(j, o) < #baldozas(tablero(o)) - 1)}
+    otras operaciones
+        pasóPorBaldoza?: nat j × nat b × oca o → bool {j ≤ 1 ∧ b < #baldozas(tablero(o))}
+        baldozaMáxima: nat j × oca o → nat {j ≤ 1}
+        dóndeEstá: nat j × oca o → nat {j ≤ 1}
+        esElTurnoDe: nat j × oca o → bool {j ≤ 1}
+    axiomas
+        ∀o: oca, ∀t: tablero, ∀j,b,d: nat
+
+        tablero(iniciar(t)) ≡ t
+        tablero(avanzar(d, o)) ≡ tablero(o)
+
+        #turno(iniciar(t)) ≡ 0
+        #turno(avanzar(d, o)) ≡ 1 + #turno(o)
+
+        dado(n, avanzar(d, o)) ≡
+            if #turno(o) =obs n then
+                d
+            else
+                dado(n, o)
+            fi
+
+        pasóPorBaldoza?(j, b, iniciar(t)) ≡ false
+        pasóPorBaldoza?(j, b, avanzar(d, o)) ≡
+            if esElTurnoDe(j, o) then
+                baldozaMáxima(j, avanzar(d, o)) ≤ b
+            else
+                pasóPorBaldoza?(j, b, o)
+            fi
+
+        baldozaMáxima(j, iniciar(t)) ≡ 0
+        baldozaMáxima(j, avanzar(d, o)) ≡
+            if esElTurnoDe(j, o) then
+                max(
+                    max(
+                        dóndeEstá(j, o) + d,
+                        efectoBaldoza(dóndeEstá(j, o) + d, tablero(o))
+                    ),
+                    baldozaMáxima(j, o)
+                )
+            else
+                baldozaMáxima(j, o)
+            fi
+
+        dóndeEstá(j, iniciar(t)) ≡ 0
+        dóndeEstá(j, avanzar(d, o)) ≡
+            if esElTurnoDe(j, o) then
+                efectoBaldoza(dóndeEstá(j, o) + d, tablero(o))
+            else
+                dóndeEstá(j, o)
+            fi
+
+        esElTurnoDe(j, o) ≡ #turnos(o) % 2 =obs j // Definir operación módulo %
+Fin TAD
+
+TAD Tablero
+    igualdad observacional
+        (∀t1,t2: tablero)(t1 =obs t2 ⟺ (
+            #baldozas(t1) =obs #baldozas(t2)
+            ∧L (∀b: nat)(b < #baldozas(t1) ⟹L efectoBaldoza(b, t1) =obs efectoBaldoza(b, t2))
+        ))
+    géneros tablero
+    exporta tablero, generadores, observadores
+    usa Nat, Secuencia
+    observadores básicos
+        #baldozas: tablero t → nat
+        efectoBaldoza: nat b × tablero t → nat
+    generadores
+        nuevo: secu[baldoza] bs → tablero {long(bs) ≥ 2 ∧ (∀b: ent)(b < long(bs) ⟹L 0 ≤ aplicarEfecto(b, bs[b]) < long(bs))}
+    axiomas
+        ∀t: tablero, ∀bs: secu[baldoza], ∀b: nat
+        #baldozas(nuevo(bs)) ≡ long(bs)
+        efectoBaldoza(b, t) ≡
+            if cuántasBaldozasSePasó(b, t) > 0 then
+                #baldozas(t) - cuántasBaldozasSePasó(b, t) - 1
+            else
+                aplicarEfecto(b, bs[b])
+            fi
+        cuántasBaldozasSePasó(b, t) ≡
+            if b ≥ #baldozas(t) then
+                b - #baldozas(t) + 1
+            else
+                0
+            fi
+Fin TAD
+
+TAD Baldoza
+    igualdad observacional
+        (∀b1,b2: baldoza)(b1 =obs b2 ⟺ (
+            #casilleros(b1) =obs #casilleros(b2) ∧ avanza?(b1) =obs avanza?(b2)
+        ))
+    géneros baldoza
+    exporta baldoza, generadores, observadores
+    usa Nat, Bool
+    observadores básicos
+        #casilleros: baldoza → nat
+        avanza?: baldoza → bool
+    generadores
+        baldoza: nat casilleros × bool avanza → baldoza
+    otras operaciones
+        aplicarEfecto: nat × baldoza → nat
+    axiomas
+        ∀n: nat, ∀b: baldoza, ∀a: bool
+        #casilleros(baldoza(n, a)) ≡ n
+        avanza?(baldoza(n, a)) ≡ a
+        aplicarEfecto(n, b) ≡
+            if avanza?(b) then
+                n + #casilleros(b)
+            else
+                n - #casilleros(b)
+            fi
+Fin TAD

@@ -1,0 +1,13 @@
+// Práctica 1 - Ejercicio 7
+
+TAD Polinomio
+    otras operaciones
+        esRaíz: polinomio × nat → bool
+    axiomas
+        ∀n,c: nat, ∀p,q: polinomio
+        evaluar(Cte(c), n) ≡ c
+        evaluar(X, n) ≡ n
+        evaluar(p + q, n) ≡ evaluar(p, n) + evaluar(q, n)
+        evaluar(p × q, n) ≡ evaluar(p, n) × evaluar(q, n)
+        esRaíz(p, n) ≡ evaluar(p, n) = 0?
+Fin TAD

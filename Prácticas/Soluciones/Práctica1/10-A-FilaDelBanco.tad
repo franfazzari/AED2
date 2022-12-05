@@ -1,0 +1,50 @@
+// Práctica 1 - Ejercicio 10-A
+
+TAD Fila
+    igualdad observacional
+        (∀f1,f2: fila)(f1 =obs f2 ⟺ (
+            (∀p: persona)(
+                esperando(p, f1) =obs esperando(p, f2)
+                ∧L (esperando(p, f1) ⟹L posición(p, f1) =obs posición(p, f2))
+            )
+        ))
+    géneros fila
+    exporta fila, generadores, observadores
+    usa Nat, Bool
+    observadores básicos
+        posición: persona p × fila f → nat {esperando(p, f)}
+        esperando: persona × fila → bool
+    generadores
+        abrirVentanilla: → fila
+        llegar: persona p × fila f → fila {¬esperando(p, f)}
+        atender: fila f → fila {¬vacía(f)}
+    otras operaciones
+        longitud: fila → nat
+        vacía: fila → bool
+    axiomas
+        ∀f: fila, ∀p,q,r: persona
+
+        // posición(p, abrirVentanilla()) ≡ No va a cumplir la restricción, no se axiomatiza.
+        posición(p, atender(f)) ≡ posición(p, f) - 1
+        posición(q, llegar(p, f)) ≡ if q =obs p then longitud(f) + 1 else posición(q, f) fi
+
+        esperando(p, abrirVentanilla()) ≡ false
+        esperando(q, llegar(p, f)) ≡ q =obs p ∨ esperando(q, f)
+        esperando(p, atender(f)) ≡ esperando(p, f) ∧L posición(p, f) > 1
+
+        longitud(abrirVentanilla()) ≡ 0
+        longitud(llegar(p, f)) ≡ longitud(f) + 1
+        longitud(atender(f)) ≡ longitud(f) - 1
+
+        vacía(abrirVentanilla()) ≡ true
+        vacía(llegar(p, f)) ≡ false
+        vacía(atender(f)) ≡ longitud(f) =obs 1
+
+        // Otra forma más fácil de axiomatizar vacía usando una instancia genérica de una fila.
+        // vacía(f) ≡ longitud(f) =obs 0
+Fin TAD
+
+// Identifico a las personas por nombre.
+// Ya se que no existe el TAD String, pero es básicamente una secuencia de chars.
+// También se que no existe el TAD char, pero es básicamente un número natural que mapea a un determinado símbolo.
+TAD Persona es String

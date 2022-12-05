@@ -1,0 +1,23 @@
+\section{Ejercicio 5: suma de potencias}
+
+\begin{algorithm}[H]
+\caption{
+    \textbf{SumaDePotencias}(\textbf{in} A: arreglo(arreglo(nat)), \textbf{in} n: nat) $\to$ \textbf{out} res: arreglo(arreglo(nat))
+}
+\Pre{n = $2^k$ para algún k: nat $\geq$ 1}
+\begin{algorithmic}[1]
+    \If{n = 1}
+        \State res $\gets$ A
+    \Else
+        \State B $\gets$ SumaDePotencias(A, n / 2)
+        \State res $\gets$ Potencia(A, n / 2) * B + B
+    \EndIf
+\end{algorithmic}
+\Complexity{ \\
+    $T(n) = T(n/2) + cte$ \\
+    Sea $a=1$, $b=2$, $f(n) = cte \in O(1)$ \\
+    $f(n) = \Theta(n^{log_b(a)}) = \Theta(n^{log_2(1)}) = \Theta(n^0) = \Theta(1)$ \\
+    $\implies T(n) = \Theta(n^{log_b(a)} log(n)) = \Theta(log(n))$ \\
+    Asumimos que la función Potencia = O(1).
+}
+\end{algorithm}
