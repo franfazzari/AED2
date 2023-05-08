@@ -1,0 +1,66 @@
+\begin{tad}{\tadNombre{Mapa}}
+\tadIgualdadObservacional{m}{m'}{Mapa}{
+    horizontales($m$) $\igobs$ horizontales($m'$) $\yluego$ \\
+    verticales($m$) $\igobs$ verticales($m'$) 
+}
+
+\tadGeneros{Mapa}
+\tadExporta{{\completar}}
+\tadUsa{{\completar}}
+
+\tadAlinearFunciones{horizontales}{Mapa}
+
+\tadObservadores
+\tadOperacion{horizontales}{Mapa}{conj(Nat)}{}
+\tadOperacion{verticales}{Mapa}{conj(Nat)}{}
+
+\tadAlinearFunciones{crear}{conj(Nat),conj(Nat)}{Mapa}{}
+
+\tadGeneradores
+\tadOperacion{crear}{conj(Nat),conj(Nat)}{Mapa}{}
+
+\tadAxiomas[\paratodo{conj(Nat)}{hs,vs}]
+\tadAlinearAxiomas{horizontales(crear(hs, vs))}
+
+\tadAxioma{horizontales(crear(hs, vs))}{hs}
+\tadAxioma{verticales(crear(hs, vs))}{vs}
+\end{tad}
+
+\begin{tad}{\tadNombre{SimCity}}
+\tadIgualdadObservacional{s}{s'}{SimCity}{
+    mapa($s$) $\igobs$ mapa($s'$) $\yluego$ \\
+    {\completar}
+}
+
+\tadGeneros{SimCity}
+\tadExporta{{\completar}}
+\tadUsa{{\completar}}
+
+\tadAlinearFunciones{popularidad}{SimCity}
+
+\tadObservadores
+\tadOperacion{mapa}{SimCity}{Mapa}{}
+\tadOperacion{casas}{SimCity}{dicc(Pos, Nivel)}{}
+\tadOperacion{comercios}{SimCity}{dicc(Pos, Nivel)}{}
+\tadOperacion{popularidad}{SimCity}{Nat}{}
+
+\tadAlinearFunciones{avanzarTurno}{SimCity/s,dicc(Pos,Construccion)/cs}
+
+\tadGeneradores
+\tadOperacion{iniciar}{Mapa}{SimCity}{}
+\tadOperacion{avanzarTurno}{SimCity/s,dicc(Pos,Construccion)/cs}{SimCity}{\ccompletar{posiciones
+    no estan ocupadas y no son ríos}}
+\tadOperacion{unir}{SimCity/a,SimCity/b}{SimCity}{\ccompletar{ríos no
+    elimnan construcciones y no se pisan construcciones de nivel máximo}}
+
+\tadOtrasOperaciones
+\tadOperacion{turnos}{SimCity}{Nat}{}
+\completar
+
+\tadAxiomas[\paratodo{simcity}{s, s'}, \paratodo{dicc(Pos, Construccion)}{cs}]
+\tadAlinearAxiomas{mapa(iniciar(m))}
+
+\tadAxioma{mapa(iniciar(m))}{m}
+\completar
+
+\end{tad}
